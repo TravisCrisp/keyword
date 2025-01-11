@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
-import { RouteTrie } from "$lib/utilities/trie";
-import { populateTrie } from "$lib/utilities/trie";
+import { RouteTrie } from "$lib/utilities/navTrie";
+import { populateTrie } from "$lib/utilities/navTrie";
 
 export const load: LayoutServerLoad = async ({ params, route, url }) => {
 

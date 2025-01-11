@@ -27,7 +27,7 @@ export class RouteTrie {
             node = node.children[segment];
         }
 
-        node.isEndpoint = true; // Mark the last node as a valid endpoint
+        node.isEndpoint = true;
     }
 
     search(path: string): boolean {
@@ -36,12 +36,12 @@ export class RouteTrie {
 
         for (const segment of segments) {
             if (!node.children[segment]) {
-                return false; // Route does not exist
+                return false;
             }
             node = node.children[segment];
         }
 
-        return node.isEndpoint; // Return true if it's a valid endpoint
+        return node.isEndpoint;
     }
 }
 
@@ -52,7 +52,7 @@ export function populateTrie(
 ): void {
     for (const route of allowedRoutes) {
         if (typeof route === "string") {
-            trie.insert(`${prefix}/${route}`.replace(/\/\//g, "/")); // Normalize double slashes
+            trie.insert(`${prefix}/${route}`.replace(/\/\//g, "/"));
         } else if (typeof route === "object") {
             const [key, subRoutes] = Object.entries(route)[0];
             populateTrie(subRoutes as (string | Record<string, any>)[], `${prefix}/${key}`, trie);

@@ -3,8 +3,6 @@
 
     let { data } = $props();
     let { meta, page } = $state(data);
-    console.log(page)
-
     const schema = getSchema(meta.schema);
 
 </script>

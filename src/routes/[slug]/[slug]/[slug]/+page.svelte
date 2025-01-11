@@ -2,9 +2,7 @@
     import { getSchema } from "$lib/schema/getSchema";
 
     let { data } = $props();
-    let { meta, page } = $state(data);
-    console.log(page)
-
+    let { page, meta } = $state(data);
     const schema = getSchema(meta.schema);
 
 </script>

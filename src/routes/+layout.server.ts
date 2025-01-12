@@ -2,10 +2,42 @@ import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import { RouteTrie } from "$lib/utilities/navTrie";
 import { populateTrie } from "$lib/utilities/navTrie";
+import { PRIVATE_SUPABASE_APPLICATION_ID, PRIVATE_SUPABASE_JWT_SECRET } from "$env/static/private";
+// import { createSupabaseClientWithToken } from "$lib/server/supabase";
+import { createSupabaseClient } from "$lib/server/supabase";
+import { generateAppToken } from "$lib/server/jwt";
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public";
 
 export const load: LayoutServerLoad = async ({ params, route, url }) => {
 
-    console.log ("Params", params.path, "url", url, "route", route);
+    const application_id = PRIVATE_SUPABASE_APPLICATION_ID;
+    const token = await generateAppToken(PRIVATE_SUPABASE_APPLICATION_ID);
+    console.log(token);
+    console.log(PRIVATE_SUPABASE_JWT_SECRET);
+    // const supabase = createSupabaseClientWithToken(token);
+    const supabase = createSupabaseClient();
+
+    async function getApplication(application_id, jwt) {
+        const response = await fetch(`${PUBLIC_SUPABASE_URL}/rest/v1/rpc/get_application`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'apikey': PUBLIC_SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ application_id })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`Error: ${error.message}`);
+        }
+
+        const data = await response.json();
+        return data;
+    }
+    const applicationData = await getApplication(application_id, token);
+    console.log('Application data:', applicationData);
 
         const project = {
         name: "Template",
@@ -18,7 +50,7 @@ export const load: LayoutServerLoad = async ({ params, route, url }) => {
     populateTrie(allowedRoutes, "", routeTrie);
 
     if (!routeTrie.search(url.pathname)) {
-        return error(404, new Error("Page not found"));
+        throw error(404, "Page not found");
     }
 
     const nav = {

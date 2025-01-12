@@ -1,9 +1,7 @@
 <script>
-    import { getSchema } from "$lib/schema/getSchema";
 
     let { data } = $props();
     let { meta, page } = $state(data);
-    const schema = getSchema(meta.schema);
 
 </script>
 
@@ -12,7 +10,7 @@
     <meta name="description" content={meta.description}/>
     <meta name="robots" content={meta.robots} />
     <script type="application/ld+json">
-        {@html JSON.stringify(schema)}
+        {@html JSON.stringify(meta.schema)}
     </script>
 </svelte:head>
 

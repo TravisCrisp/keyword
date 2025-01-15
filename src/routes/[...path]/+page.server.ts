@@ -1,21 +1,18 @@
+import { getCache } from '$lib/server/redisCache';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params, route, url }) => {
+export const load: PageServerLoad = async ({ url }) => {
 
-    const page = {
-        h2: 'Page header',
-        p: 'Page content',
-    };
 
-    const meta = {
-        title: 'Page',
-        description: 'Page description',
-        robots: 'noindex, nofollow',
-        schema: 'WebPage',
-    };
+    const applicationData = await getCache();
+    const page = applicationData.pages[url.pathname];
+    if (!page) {
+        throw error(404, "Page not found");
+    }
+    // console.log(page);
 
     return {
         page: page,
-        meta: meta,
     }
 };

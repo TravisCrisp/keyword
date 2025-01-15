@@ -4,6 +4,5 @@ export const load: PageLoad = async ({ data }) => {
 
     return {
         page: data.page,
-        meta: data.meta, 
     };
 };

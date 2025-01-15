@@ -1,18 +1,18 @@
 <script>
     
     let { data } = $props();
-    let { meta, page } = $state(data);
+    let { page } = $derived(data);
 
 </script>
 
 <svelte:head>
-    <title>{meta.title}</title>
-    <meta name="description" content={meta.description}/>
-    <meta name="robots" content={meta.robots} />
+    <title>{page.name}</title>
+    <meta name="description" content={""}/>
+    <meta name="robots" content={"no-index, no-follow"} />
     <script type="application/ld+json">
-        {@html JSON.stringify(meta.schema)}
+        {@html JSON.stringify("")}
     </script>
 </svelte:head>
 
-<h2 class="text-xl font-bold">{page.h2}</h2>
-<p>{page.p}</p>
+<h2 class="text-center text-xl font-bold">{page.name}</h2>
+<p class="text-center">{page.content[0].content}</p>

@@ -2,7 +2,7 @@
     import Bars from "../icons/Bars.svelte";
 	import { clickOut } from "$lib/utilities/clickOut";
     
-    let { project, nav } = $props();
+    let { app, nav } = $props();
     let isMenuOpen = $state(false);
 
     function toggleMenu() {
@@ -14,7 +14,7 @@
 <header class="bg-blue-100 p-2 flex items-center space-x-4 justify-between relative">
     <div class="flex space-x-2 items-center whitespace-nowrap">
         <a href="/">
-            <h1 class="text-2xl font-bold">Template</h1>
+            <h1 class="text-2xl font-bold">{app.name}</h1>
         </a>
     </div>
     <div use:clickOut onclick_out={toggleMenu} class="flex items-center">
@@ -28,14 +28,14 @@
             <Bars />
         </button>
             <nav class="justify-right absolute top-full right-0 mt-0 bg-blue-100 z-50">
-                {#each nav as n}
+                {#each nav.pages as page}
                     <div class="flex justify-center block text-l font-bold hover:bg-blue-200">
                         <a
-                            href={n.href}
+                            href={page.path}
                             class="p-2"
                             onclick={() => isMenuOpen = false}
                         >
-                            {n.label}
+                            {page.name}
                         </a>
                     </div>
                 {/each}

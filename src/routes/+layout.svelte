@@ -4,12 +4,11 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import '../app.css';
 	let { data, children } = $props();
-	let { project, nav } = $state(data);
-	
+	let { app, nav } = $state(data);
 </script>
 
-<Header {project} nav={nav.header}/>
+<Header {app} nav={nav.find((nav: { name: string }) => nav.name === "Header")}/>
 <Main>
 	{@render children()}
 </Main>
-<Footer nav={nav.footer}/>
+<Footer {app} nav={nav.find((nav: { name: string }) => nav.name === "Footer")}/>

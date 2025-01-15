@@ -1,13 +1,21 @@
-import { createClient } from '@supabase/supabase-js';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 
-export const createSupabaseClient = () => {
-    return createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
-};
+export async function getApplication(application_id: string, jwt: string, function_name: string) {
+    const response = await fetch(`${PUBLIC_SUPABASE_URL}/rest/v1/rpc/${function_name}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'apikey': PUBLIC_SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ application_id })
+    });
 
-// export const createSupabaseClientWithToken = (token: string) => {
-//     const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
-//     supabase.auth.setSession({ access_token: token, refresh_token: '' });
-//     return supabase;
-// };
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Error: ${error.message}`);
+    }
 
+    const data = await response.json();
+    return data;
+}

@@ -46,16 +46,29 @@ export class RouteTrie {
 }
 
 export function populateTrie(
-    allowedRoutes: (string | Record<string, any>)[],
+    hierarchy: Record<string, any> | Record<string, any>[],
     prefix: string,
     trie: RouteTrie
 ): void {
-    for (const route of allowedRoutes) {
-        if (typeof route === "string") {
-            trie.insert(`${prefix}/${route}`.replace(/\/\//g, "/"));
-        } else if (typeof route === "object") {
-            const [key, subRoutes] = Object.entries(route)[0];
-            populateTrie(subRoutes as (string | Record<string, any>)[], `${prefix}/${key}`, trie);
+    // Ensure hierarchy is an array
+    const entries = Array.isArray(hierarchy) ? hierarchy : [hierarchy];
+
+    for (const entry of entries) {
+        if (entry.slug) {
+            // Construct the full path using the slug.
+            const currentPath = `${prefix}/${entry.slug}`.replace(/\/\//g, "/");
+            trie.insert(currentPath);
+
+            // Recursively process `items`, `pages`, and `collections` if they exist.
+            if (entry.items && Array.isArray(entry.items)) {
+                populateTrie(entry.items, currentPath, trie);
+            }
+            if (entry.pages && Array.isArray(entry.pages)) {
+                populateTrie(entry.pages, currentPath, trie);
+            }
+            if (entry.collections && Array.isArray(entry.collections)) {
+                populateTrie(entry.collections, currentPath, trie);
+            }
         }
     }
 }

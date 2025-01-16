@@ -15,4 +15,3 @@
 </svelte:head>
 
 <h2 class="text-center text-xl font-bold">{page.name}</h2>
-<p class="text-center">{page.content[0].content}</p>

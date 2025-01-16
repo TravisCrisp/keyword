@@ -7,8 +7,8 @@
 	let { app } = $derived(data);
 </script>
 
-<Header {app} nav={app.nav.header}/>
+<Header {app} nav={app.nav?.header}/>
 <Main>
 	{@render children()}
 </Main>
-<Footer {app} nav={app.nav.footer}/>
+<Footer {app} nav={app.nav?.footer}/>

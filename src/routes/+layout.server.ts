@@ -3,8 +3,9 @@ import type { LayoutServerLoad } from "./$types";
 import { getCache } from "$lib/server/redisCache";
 import { setCache } from "$lib/server/redisCache";
 
-export const load: LayoutServerLoad = async ({ params, url }) => {
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies}) => {
 
+    const { session, user } = await safeGetSession();
     const cache = await setCache();
     const applicationData = await getCache();
     if (!applicationData) {
@@ -15,5 +16,7 @@ export const load: LayoutServerLoad = async ({ params, url }) => {
 
     return {
         app: applicationData,
+        session,
+        cookies: cookies.getAll(),
     };
 };

@@ -1,15 +1,27 @@
-/// <reference types="@sveltejs/kit" />
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 
 declare global {
-	namespace App {
-		interface ApplicationData {
-			nav: Array<{
-				name: string;
-				items: Array<any>;
-			}>;
-			pages: Record<string, any>;
-		}
-	}
+  namespace App {
+    // interface Error {}
+    interface Locals {
+      supabase: SupabaseClient
+      safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
+      session: Session | null
+      user: User | null
+    }
+    interface PageData {
+      session: Session | null
+      app: {
+        nav: {
+          header: any
+          footer: any
+          user: any
+        }
+      }
+    }
+    // interface PageState {}
+    // interface Platform {}
+  }
 }
 
-export {};
+export {}

@@ -1,4 +1,7 @@
 <script>
+	import Dashboard from './Dashboard.svelte';
+	import Auth from './Auth.svelte';
+
 
     let { data } = $props();
     let { page } = $derived(data);
@@ -14,4 +17,9 @@
     </script>
 </svelte:head>
 
-<h2 class="text-center text-xl font-bold">{page.name}</h2>
+<h2 class="text-center text-xl font-bold p-4">{page.name}</h2>
+{#if page.path === '/dashboard'}
+    <Dashboard />
+{:else if page.path === '/sign-in' || page.path === '/sign-up'}
+    <Auth page={page} />
+{/if}

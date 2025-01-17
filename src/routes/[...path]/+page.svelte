@@ -19,7 +19,7 @@
 
 <h2 class="text-center text-xl font-bold p-4">{page.name}</h2>
 {#if page.path === '/dashboard'}
-    <Dashboard />
+    <Dashboard data={data} />
 {:else if page.path === '/sign-in' || page.path === '/sign-up'}
     <Auth page={page} />
 {/if}

@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
     }
 
     const { data: applications } = await supabase.from('app').select('*');
-    console.log(applications);
+
     const applicationData = await getCache();
     const page = applicationData.pages[url.pathname];
     if (!page) {
@@ -23,6 +23,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
 
     return {
         page: page,
+        applications: applications,
     };
 };
 

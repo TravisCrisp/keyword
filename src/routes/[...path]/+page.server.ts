@@ -1,6 +1,7 @@
 import { getCache } from '$lib/server/redisCache';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { sortPagesByPath } from '$lib/utilities/sort';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase, session } }) => {
 
@@ -13,7 +14,9 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
     }
 
     const { data: applications, error: applicationsError } = await supabase.from('app').select('*').order('selected', { ascending: false });
-    const { data: selectedApplication, error: selectedApplicationError } = await supabase.rpc('get_application', { application_id: applications[0].id });
+    // const { data: selectedApplication, error: selectedApplicationError } = await supabase.rpc('get_application', { application_id: applications[0].id });
+    // selectedApplication.pages = sortPagesByPath(selectedApplication.pages);
+    const selectedApplication = {}
 
     const applicationData = await getCache();
     const page = applicationData.pages[url.pathname];

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Container from "$lib/components/Container.svelte";
-
+    import { sortPagesByPath } from '$lib/utilities/sort';
     let { data, supabase, selectedApplication } = $props();
     let application = $state(selectedApplication);
     
@@ -10,6 +10,7 @@
             console.error(error);
         }
         application = data;
+        application.pages = sortPagesByPath(application.pages);
     };
 
 </script>
@@ -27,22 +28,24 @@
     </div>
     <div class="space-y-4">
         <h2 class="text-xl font-bold">Pages</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col space-y-4">
             {#each application.pages as page}
-                <Container> 
-                    <li>{page.name}</li>
+                <Container>
+                    <div class="flex items-center space-x-4">   
+                        <p>{page.name}</p>
+                        <p>{page.path}</p>
+                    </div>
                 </Container>
             {/each}
         </div>
     </div>
     <div class="space-y-4">
         <h2 class="text-xl font-bold">Navigation</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col space-y-4">
             {#each application.nav as nav}
                 <Container>
                     <div class="flex items-center space-x-4">
                         <li>{nav.name}</li>
-                        <button class="bg-blue-500 text-white px-2 py-1 rounded-md">Edit</button>
                     </div>
                 </Container>
             {/each}

@@ -12,7 +12,8 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
         redirect(303, '/');
     }
 
-    const { data: applications } = await supabase.from('app').select('*');
+    const { data: applications, error: applicationsError } = await supabase.from('app').select('*').order('selected', { ascending: false });
+    const { data: selectedApplication, error: selectedApplicationError } = await supabase.rpc('get_application', { application_id: applications[0].id });
 
     const applicationData = await getCache();
     const page = applicationData.pages[url.pathname];
@@ -24,6 +25,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
     return {
         page: page,
         applications: applications,
+        selectedApplication: selectedApplication,
     };
 };
 
@@ -31,7 +33,6 @@ export const actions: Actions = {
     signin: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData();
         const data = Object.fromEntries(formData);
-        console.log(data);
 
         const { error } = await supabase.auth.signInWithPassword({
             email: data.email as string,
@@ -47,7 +48,6 @@ export const actions: Actions = {
     signup: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData();
         const data = Object.fromEntries(formData);
-        console.log(data);
 
         const { error } = await supabase.auth.signUp({
             email: data.email as string,
@@ -61,7 +61,10 @@ export const actions: Actions = {
     },
 
     signout: async ({ request, locals: { supabase } }) => {
-        await signOutUser(supabase);
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            throw error;
+        }
         redirect(303, "/sign-in");
     },
 

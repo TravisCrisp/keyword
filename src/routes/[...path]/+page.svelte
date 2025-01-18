@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import Dashboard from './Dashboard.svelte';
 	import Auth from './Auth.svelte';
 
 
     let { data } = $props();
-    let { page } = $derived(data);
+    let { page, supabase, selectedApplication } = $derived(data);
 
 </script>
 
@@ -17,9 +17,9 @@
     </script>
 </svelte:head>
 
-<h2 class="text-center text-xl font-bold p-4">{page.name}</h2>
+<!-- <h2 class="text-center text-xl font-bold p-4">{page.name}</h2> -->
 {#if page.path === '/dashboard'}
-    <Dashboard data={data}/>
+    <Dashboard data={data} supabase={supabase} selectedApplication={selectedApplication}/>
 {:else if page.path === '/sign-in' || page.path === '/sign-up'}
     <Auth page={page} />
 {/if}

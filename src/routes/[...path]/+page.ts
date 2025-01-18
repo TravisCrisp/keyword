@@ -5,5 +5,6 @@ export const load: PageLoad = async ({ data }) => {
     return {
         page: data.page,
         applications: data.applications,
+        selectedApplication: data.selectedApplication,
     };
 };

@@ -52,7 +52,7 @@
     <form method="POST" action="?/createPage" class="flex flex-col space-y-4">
         <div class="flex flex-col space-y-1">
             <label for="name">Name</label>
-            <input onchange={(e) => onNameChange(e.currentTarget.value)} oninput={(e) => setName(e.currentTarget.value)} type="text" name="name" class="w-full border border-gray-300 rounded-md p-2" value={nameValue} />
+            <input required onchange={(e) => onNameChange(e.currentTarget.value)} oninput={(e) => setName(e.currentTarget.value)} type="text" name="name" class="w-full border border-gray-300 rounded-md p-2" value={nameValue} />
         </div>
         {#if !parentPage}
         <div class="flex flex-col space-y-1">

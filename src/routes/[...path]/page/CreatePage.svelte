@@ -7,6 +7,11 @@
     let slug = $state("");
     let selectedParentPage = $state(application.page[0]);
 
+    let titleValue = $state("");
+    let descriptionValue = $state("");
+    let headerValue = $state("");
+    let paragraphValue = $state("");
+
     function selectParentPage(id: number) {
         selectedParentPage = application.page.find(page => page.id == id);
     };
@@ -20,7 +25,7 @@
     };
 
     function setName(name: string) {
-        const exceptions = ['a', 'or', 'and', 'is', 'the', 'of', 'in', 'on', 'at', 'to', 'for'];
+        const exceptions = ['a', 'or', 'and', 'is', 'the', 'of', 'on', 'at', 'to', 'for'];
         nameValue = name
             .replace(/[^a-zA-Z0-9\s]/g, '')
             .split(' ')
@@ -70,6 +75,22 @@
             <div class="flex items-center space-x-2 w-full">
                 <span class="w-full">{selectedParentPage.path === "/" ? "/" + slug : selectedParentPage.path + "/" + slug}</span>
             </div>
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="w-full border border-gray-300 rounded-md p-2" value={titleValue} />
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label for="description">Description</label>
+            <input type="text" name="description" class="w-full border border-gray-300 rounded-md p-2" value={descriptionValue} />
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label for="header">Header</label>
+            <input type="text" name="header" class="w-full border border-gray-300 rounded-md p-2" value={headerValue} />
+        </div>
+        <div class="flex flex-col space-y-1">
+            <label for="paragraph">Paragraph</label>
+            <textarea name="paragraph" class="w-full border border-gray-300 rounded-md p-2" value={paragraphValue}></textarea>
         </div>
             <input type="hidden" name="path" value={selectedParentPage.path === "/" ? "/" + slug : selectedParentPage.path + "/" + slug}/>
             <input type="hidden" name="parent_id" value={selectedParentPage.path === "/" ? null : selectedParentPage.id} />

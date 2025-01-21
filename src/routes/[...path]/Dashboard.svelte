@@ -2,7 +2,7 @@
 	import Plus from "$lib/icons/Plus.svelte";
     import { sortPagesByPath } from '$lib/utilities/sort';
 	import Page from "./page/Page.svelte";
-	import Navigation from "./Navigation.svelte";
+	import Navigation from "./nav/Navigation.svelte";
 	import CreatePage from "./page/CreatePage.svelte";
 	import Container from "$lib/components/Container.svelte";
     let { data, supabase, selectedApplication } = $props();
@@ -16,7 +16,7 @@
     async function selectApp(id: number) {
         const { data: selectedApp, error: selectedApplicationError } = await supabase
             .from('app')
-            .select('*, theme: theme(*), template(*), page(*, layout(*),parents: page_hierarchy!page_hierarchy_child_id_fkey(*), children: page_hierarchy!page_hierarchy_parent_id_fkey(*), nav_page(*), page_schema(*), page_content!page_content_page_id_fkey(*), content(*)), nav(*, nav_page(*))')
+            .select('*, theme: theme(*), template(*), page(*, layout(*),parents: page_hierarchy!page_hierarchy_child_id_fkey(*), children: page_hierarchy!page_hierarchy_parent_id_fkey(*), nav_page(*), page_schema(*), content(*)), nav(*, nav_page(*))')
             .eq('id', id)
             .single();
             selectedApp.page = sortPagesByPath(selectedApp.page);

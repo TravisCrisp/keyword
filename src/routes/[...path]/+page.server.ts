@@ -31,13 +31,14 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, session } 
         if (applications.length > 0) {
             const { data: selectedApp, error: selectedApplicationError } = await supabase
             .from('app')
-            .select('*, page_map: page(*), nav_map: nav(*), theme: theme(*), template(*), page(*, layout(*),parents: page_hierarchy!page_hierarchy_child_id_fkey(*), children: page_hierarchy!page_hierarchy_parent_id_fkey(*), nav_page(*), page_schema(*), page_content!page_content_page_id_fkey(*), content(*)), nav(*, nav_page(*))')
+            .select('*, page_map: page(*), nav_map: nav(*), theme: theme(*), template(*), page(*, layout(*),parents: page_hierarchy!page_hierarchy_child_id_fkey(*), children: page_hierarchy!page_hierarchy_parent_id_fkey(*), nav_page(*), page_schema(*), content(*)), nav(*, nav_page(*))')
             .eq('id', applications[0].id)
             .single();
             selectedApp.page = sortPagesByPath(selectedApp.page);
             selectedApp.page_map = buildPageMap(selectedApp.page_map);
             selectedApp.nav_map = buildNavMap(selectedApp.nav_map);
             selectedApplication = selectedApp
+            // console.log(selectedApp.page)
         }
     }
 
@@ -122,15 +123,22 @@ export const actions: Actions = {
     createPage: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData();
         const data = Object.fromEntries(formData);
-
+        
+        // Extract the non-page data for hierarchy and content
         const parent_id = data.parent_id ? data.parent_id : null;
+        const header = data.header ? data.header : null;
+        const paragraph = data.paragraph ? data.paragraph : null;
         delete data.parent_id;
+        delete data.header;
+        delete data.paragraph;
 
+        // Create the page
         const { data: pageData, error: pageError } = await supabase.from('page').insert(data).select().single();
         if (pageError) {
             throw pageError;
         };
 
+        // Create the hierarchy
         if (parent_id) {
             const { data: hierarchyData, error: hierarchyError } = await supabase.from('page_hierarchy').insert({
                 parent_id: parent_id,
@@ -141,6 +149,33 @@ export const actions: Actions = {
                 throw hierarchyError;
             };
         };
+
+        // Create the header
+        if (header) {
+            const { data: headerData, error: headerError } = await supabase.from('content').insert({
+                page_id: pageData.id,
+                app_id: data.app_id,
+                tag: 'h2',
+                content: header
+            });
+            if (headerError) {
+                throw headerError;
+            };
+        };
+
+        // Create the paragraph
+        if (paragraph) {
+            const { data: paragraphData, error: paragraphError } = await supabase.from('content').insert({
+                page_id: pageData.id,
+                app_id: data.app_id,
+                tag: 'p',
+                content: paragraph
+            });
+            if (paragraphError) {
+                throw paragraphError;
+            };
+        };
+
         return pageData;
     },
 
@@ -159,6 +194,8 @@ export const actions: Actions = {
     deletePage: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData();
         const data = Object.fromEntries(formData);
+
+        // Delete the page and all descendants
         const { data: pageData, error: pageError } = await supabase.from('page').delete().eq('app_id', data.app_id).like('path', `${data.path}%`);
         console.log(pageData, pageError);
         if (pageError) {

@@ -2,16 +2,23 @@
     import Container from '$lib/components/Container.svelte';
 	import Close from '$lib/icons/Close.svelte';
 	import Down from '$lib/icons/Down.svelte';
+	import Edit from '$lib/icons/Edit.svelte';
 	import Plus from '$lib/icons/Plus.svelte';
 	import Right from '$lib/icons/Right.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import CreatePage from './CreatePage.svelte';
 	import PageContent from './PageContent.svelte';
+	import PageMeta from './PageMeta.svelte';
+	import PageSettings from './PageSettings.svelte';
 
     let { application, page, supabase, togglePageActive } = $props();
 
     let pageOpen = $state(false);
     let createChildPage = $state(false);
+    let pageMetaOpen = $state(false);
+    let pageMetaEdit = $state(false);
+    let pageSettingsOpen = $state(false);
+    let pageContentOpen = $state(false);
 
     async function toggleCurrentPageActive(active: boolean) {
         const { data, error } = await supabase.from('page').update({ active: !active }).eq('id', page.id).eq('app_id', application.id);
@@ -58,6 +65,22 @@
 
     function toggleCreateChildPage() {
         createChildPage = !createChildPage;
+    };
+
+    function togglePageSettingsOpen() {
+        pageSettingsOpen = !pageSettingsOpen;
+    };
+
+    function togglePageMetaOpen() {
+        pageMetaOpen = !pageMetaOpen;
+    };
+
+    function togglePageMetaEdit() {
+        pageMetaEdit = !pageMetaEdit;
+    };
+
+    function togglePageContentOpen() {
+        pageContentOpen = !pageContentOpen;
     };
 
     function confirmDelete(event: Event) {
@@ -125,13 +148,78 @@
         </div>
     {/if}
     </div>
-    {#if pageOpen}
-        <PageContent page={page} />
-    {/if}
     {#if createChildPage}
         <div class="flex flex-col space-y-4">
             <CreatePage application={application} createPage={toggleCreateChildPage} parentPage={page}/>
         </div>
     {/if}
-</div>
+    {#if pageOpen}
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center space-x-2">
+                    {#if !pageSettingsOpen}
+                        <button onclick={togglePageSettingsOpen}>
+                            <Right />
+                        </button>
+                    {:else}
+                        <button onclick={togglePageSettingsOpen}>
+                            <Down />
+                        </button>
+                    {/if}
+                    <h3 class="font-bold">Settings</h3>
+                </div>
+                {#if pageSettingsOpen}
+                    <PageSettings page={page} />
+                {/if}
+            </div>
+                <div class="flex flex-col space-y-4">
+                    <div class="flex items-center justify-between space-x-2">
+                        <div class="flex items-center space-x-2">
+                        {#if !pageMetaOpen}
+                            <button onclick={togglePageMetaOpen}>
+                                <Right />
+                            </button>
+                        {:else}
+                            <button onclick={togglePageMetaOpen}>
+                                <Down />
+                            </button>
+                        {/if}
+                        <h3 class="font-bold">Meta</h3>
+                        </div>
+                        <div>
+                        {#if pageMetaOpen}
+                            {#if !pageMetaEdit}
+                            <button onclick={togglePageMetaEdit}>
+                                <Edit />
+                            </button>
+                            {:else}
+                            <button onclick={togglePageMetaEdit}>
+                                <Close />
+                            </button>
+                            {/if}
+                        {/if}
+                        </div>
+                    </div>
+                    {#if pageMetaOpen}
+                        <PageMeta page={page} pageMetaEdit={pageMetaEdit} />
+                    {/if}
+                </div>
+                <div class="flex flex-col space-y-4">
+                    <div class="flex items-center space-x-2">
+                        {#if !pageContentOpen}
+                            <button onclick={togglePageContentOpen}>
+                                <Right />
+                            </button>
+                    {:else}
+                        <button onclick={togglePageContentOpen}>
+                            <Down />
+                        </button>
+                    {/if}
+                    <h3 class="font-bold">Content</h3>
+                </div>
+                {#if pageContentOpen}
+                    <PageContent page={page} />
+                {/if}
+            </div>
+        {/if}
+    </div>
 </Container>
